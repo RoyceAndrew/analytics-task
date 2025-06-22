@@ -16,6 +16,8 @@ Comprehensive supermarket data visualization dashboard with ETL process features
 - **Data Source:** Supermarket Dataset from Kaggle
 
 ---
+## 🖱️Demo
+### 💻 Live Demo - ([Click here](https://analytics-task.vercel.app/))
 ### 🎥 Demo Video - ([Click here](https://www.youtube.com/watch?v=CSa8QfW5UAo))
 ---
 
