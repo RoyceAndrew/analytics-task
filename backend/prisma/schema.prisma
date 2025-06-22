@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // optional (I use it for deployment in supabase)
+}
+
+model Category {
+  id            Int           @id @default(autoincrement())
+  name          String
+  subcategories Subcategory[]
+}
+
+model Subcategory {
+  id         Int       @id @default(autoincrement())
+  name       String
+  categoryId Int
+  products   Product[]
+  category   Category  @relation(fields: [categoryId], references: [id])
+}
+
+model Product {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  subcategoryId      Int
+  inventoryMovements InventoryMovement[]
+  subcategory        Subcategory         @relation(fields: [subcategoryId], references: [id])
+  sales              Sale[]
+}
+
+model Sale {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  quantity  Int
+  discount  Float
+  country   String
+  state     String
+  date      DateTime
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model InventoryMovement {
+  id           Int      @id @default(autoincrement())
+  productId    Int
+  quantity     Int
+  movementType String
+  date         DateTime
+  product      Product  @relation(fields: [productId], references: [id])
+}
