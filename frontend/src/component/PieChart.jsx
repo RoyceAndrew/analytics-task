@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Plot from "react-plotly.js";
-import { BounceLoader } from "react-spinners";
 import { useEffect, useState } from "react";
 import { useTheme } from "../hook/useTheme";
+import { InfoStatus } from "./InfoStatus";
 
 const api = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -29,7 +29,6 @@ export default function PieChart() {
   const isDark = theme === 'dark';
   const bgColor = isDark ? '#1e293b' : 'white';
   const textColor = isDark ? 'white' : '#1f2937';
-  const loaderColor = isDark ? 'white' : 'black';
 
   useEffect(() => {
     const handleResize = () => {
@@ -46,32 +45,12 @@ export default function PieChart() {
     };
   }, [mobile])
 
-  if (isLoading) {
+  if (isLoading || !data || !data.length || isError) {
     return (
-      <div className="w-full h-[calc(100dvh*1/3-20px)] 2xl:h-full flex justify-center items-center col-start-1 col-end-2 row-start-1 row-end-2 ring-2 ring-slate-500 dark:ring-slate-600 dark:bg-slate-800 p-2 rounded-lg">
-        <BounceLoader color={loaderColor} />
-      </div>
+      <InfoStatus props={{isLoading, isError, error, colStart: 1, colEnd: 2, rowStart: 1, rowEnd: 2}} />
     );
   }
 
-  if (isError) {
-    return (
-      <div className="w-full h-[calc(100dvh*1/3-20px)] 2xl:h-full  row-start-1 row-end-2 col-start-1 col-end-2 ring-2 ring-red-500 p-4 rounded-lg flex items-center justify-center">
-        <div className="text-center text-red-600">
-          <p className="text-lg">{ language === 'en' ? 'Failed to load pie chart data.' : 'Gagal memuat data Pie Chart.'}</p>
-          <p className="text-sm">{error?.message || "Unknown error"}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!data || !data.length) return (
-    <div className="w-full h-[calc(100dvh*1/3-20px)] 2xl:h-full col-span-2 row-start-1 row-end-2 col-end-3 col-start-2 ring-2 ring-red-500 p-4 rounded-lg flex items-center justify-center">
-        <div className="text-center text-red-600">
-          <p className="text-lg">{ language === 'en' ? 'No pie chart data.' : 'Tidak ada data Pie Chart.'}</p>
-        </div>
-      </div>
-  );
 
   const sorted = [...data].sort((a, b) => b.totalSold - a.totalSold);
   const top10 = sorted.slice(0, 10);

@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Plot from "react-plotly.js";
-import { BounceLoader } from "react-spinners";
 import { useTheme } from "../hook/useTheme";
 import { useData } from "../hook/useData";
+import { InfoStatus } from "./InfoStatus";
 
 const api = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -25,44 +25,12 @@ export default function ScatterChart() {
   });
   setScatter(data);
 
-  const isDark = theme === "dark";
-  const loaderColor = isDark ? "white" : "black";
-
-  if (isLoading) {
-    return (
-      <div className="w-full h-[calc(100dvh*1/3-20px)] 2xl:h-full flex justify-center items-center col-start-2 col-end-3 row-start-1 row-end-2 ring-2 ring-slate-500 dark:ring-slate-600 dark:bg-slate-800 p-2 rounded-lg">
-        <BounceLoader color={loaderColor} />
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="w-full h-[calc(100dvh*1/3-20px)] 2xl:h-full col-span-2 row-start-1 row-end-2 col-end-3 col-start-2 ring-2 ring-red-500 p-4 rounded-lg flex items-center justify-center">
-        <div className="text-center text-red-600">
-          <p className="text-lg">
-            {language === "en"
-              ? "Failed to load scatter chart data."
-              : "Gagal memuat data Scatter Chart."}
-          </p>
-          <p className="text-sm">{error?.message || "Unknown error"}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!data || !data.length)
-    return (
-      <div className="w-full h-[calc(100dvh*1/3-20px)] 2xl:h-full col-span-2 row-start-1 row-end-2 col-end-3 col-start-2 ring-2 ring-red-500 p-4 rounded-lg flex items-center justify-center">
-        <div className="text-center text-red-600">
-          <p className="text-lg">
-            {language === "en"
-              ? "No scatter chart data."
-              : "Tidak ada data Scatter Chart."}
-          </p>
-        </div>
-      </div>
-    );
+  if (isLoading || !data || !data.length || isError) {
+      return (
+        <InfoStatus props={{isLoading, isError, error, colStart: 2, colEnd: 3, rowStart: 1, rowEnd: 2}} />
+      );
+    }
+  
 
   const slice = data.slice(0, 2);
 
